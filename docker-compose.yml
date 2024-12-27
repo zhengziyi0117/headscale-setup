@@ -1,0 +1,48 @@
+version: '3'
+
+services:
+  headscale:
+    container_name: headscale
+    image: dockerpull.org/headscale/headscale:latest
+    restart: always
+    volumes:
+      - ./headscale-config:/etc/headscale
+      - ./headscale-data:/var/lib/headscale
+    entrypoint: headscale serve
+    networks:
+      headscale-network:
+  caddy:
+    image: dockerpull.org/caddy:latest
+    container_name: caddy
+    restart: always
+    networks:
+      headscale-network:
+    #stdin_open: true
+    #tty: true
+    volumes:
+      - ./caddy-data:/data
+      - ./caddy-config:/config
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 80:80
+      - 443:443
+    entrypoint: /usr/bin/caddy run --adapter caddyfile --config /config/Caddyfile
+  derper:
+    container_name: derper
+    image: dockerpull.org/fredliang/derper
+    restart: always
+    ports:
+      - 3478:3478/udp
+        #- 19850:19850
+    environment:
+      - DERP_DOMAIN=derper.ziyiziyi.online
+      - DERP_CERT_MODE=letsencrypt
+      - DERP_ADDR=:19850
+        #- DERP_VERIFY_CLIENTS=true
+        #volumes:
+      # - /var/run/tailscale/tailscaled.sock:/var/run/tailscale/tailscaled.sock
+    networks:
+      headscale-network:
+
+networks:      
+  headscale-network:

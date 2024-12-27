@@ -1,0 +1,13 @@
+regions:
+  901:
+    regionid: 901
+    regioncode: headscale 
+    regionname: headscale(shanghai)
+    nodes:
+      - name: headscale-self
+        regionid: 901
+        hostname: derper.ziyiziyi.online
+        ipv4: 124.221.12.127
+        stunport: 3478
+        stunonly: false
+        derpport: 443
